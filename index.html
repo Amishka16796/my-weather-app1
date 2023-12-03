@@ -12,15 +12,30 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            
+            
         }
 
-        .weather-container {
+        .weather-container{
+            margin: 50px;
             max-width: 400px;
             margin: 50px auto;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
+        }
+
+
+        .weather-containerfor{
+
+            
+            display: flex;
+            flex-wrap: wrap;
+            
+        }
+        .weather-containerfor>div{
+            gap: 25px;
         }
 
         h2 {
@@ -41,23 +56,7 @@
             font-size: 18px;
         }
 
-        /* Add your own styles for different weather conditions */
-        .weather-icon {
-            max-width: 100px;
-            margin: 10px auto;
-        }
-
-        .sunny {
-            color: #ffdb58; /* Yellow */
-        }
-
-        .cloudy {
-            color: #87ceeb; /* Light Sky Blue */
-        }
-
-        .rainy {
-            color: #4682b4; /* Steel Blue */
-        }
+       
     </style>
 </head>
 <body>
@@ -71,70 +70,85 @@
         <h4 id="humidity"></h4>
         
     </div>
-    <div class="weather-container">
-
-        <h2 id="location"></h2>
-        <h3 id="temp"></h3>
-        <h3 id="weather"></h3>
-        <p id="desc"></p>
-        <h4 id="humidity"></h4>
+    <div class="weather-containerfor" id="divfor">      
         
     </div>
-
-    
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
             const apiKey = '1b2359d25ca0f7433288f00b97d8317f';
             
-            // const apiKey = '1b2359d25ca0f7433288f00b97d8317f';
             const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=6.035179723595554&lon=80.21715362192663&appid=${apiKey}`;
             const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=6.035179723595554&lon=80.21715362192663&appid=${apiKey}`;
 
                 //6.035179723595554, 80.21715362192663
                 
                 var http = new XMLHttpRequest();  // create instance using XMLHttpRequst class
-                var httpForcast = new XMLHttpRequest();  // create instance using XMLHttpRequst class
+                var httpForecast = new XMLHttpRequest();  // create instance using XMLHttpRequst class
             
-
+                let div = document.getElementById("divfor");
 
                 http.open('GET', weatherApiUrl);
                 http.send();
                 
-                httpForcast.open('GET', forecastApiUrl);
-                httpForcast.send();
+                 httpForecast.open('GET', forecastApiUrl);
+                 httpForecast.send();
                 
 
                 http.onreadystatechange = ()=>{
 
-              if (http.readyState == 4 && http.status == 200){
-                var data = JSON.parse(http.response)
-                //  console.log(data);
-                // console.log(data.main.temp);
-                
-                var city  = data.name;
-                var weather = data.weather[0].main;
-                var description = data.weather[0].description;
-                
-                var { temp , humidity} = data.main;
-                var tempCel  = (Number(temp) - 273.15).toFixed(2) + ' °C'; 
-                var humPrecent  = humidity + '%';   
-              }
+                    if (http.readyState == 4 && http.status == 200){
 
-              document.getElementById('location').innerHTML= city;
-              document.getElementById('temp').innerHTML = tempCel;
-              document.getElementById('humidity').innerHTML = humPrecent;
-              document.getElementById('weather').innerHTML = weather;
-              document.getElementById('desc').innerHTML = description;
-             }
+                                var data = JSON.parse(http.response)
+                                //  console.log(data);
+                                // console.log(data.main.temp);
+                                
+                                var city  = data.name;
+                                var weather = data.weather[0].main;
+                                var description = data.weather[0].description;
+                                
+                                var { temp , humidity} = data.main;
+                                var tempCel  = (Number(temp) - 273.15).toFixed(2) + ' °C'; 
+                                var humPrecent  = humidity + '%';   
 
-             if (httpForcast.readyState == 4 && httpForcast.status == 200){
-                var data = JSON.parse(http.response)
-                 console.log(data);
-             }
+                            }
 
+                            document.getElementById('location').innerHTML= city;
+                            document.getElementById('temp').innerHTML = tempCel;
+                            document.getElementById('humidity').innerHTML = humPrecent;
+                            document.getElementById('weather').innerHTML = weather;
+                            document.getElementById('desc').innerHTML = description;
 
+                  
+                }
+
+                httpForecast.onreadystatechange = () =>{
+
+                    
+                    if (httpForecast.readyState == 4 && httpForecast.status == 200){
+
+                        var datafor = JSON.parse(httpForecast.response);
+                        console.log(datafor);
+
+                        for (let i =0 ; i< datafor.list.length; i++){
+
+                            
+                            div.innerHTML += `
+
+                            <div class="weather-container">
+
+                                <h2 id="forelocation"></h2>
+                                <h3>${(Number(datafor.list[i].main.temp)- 273.15).toFixed(2)}°C</h3>
+                                <h3>${datafor.list[i].weather[0].main}</h3>
+                                <p id="foredesc">${datafor.list[i].weather[0].description}</p>
+                                <h4>${datafor.list[i].dt_txt}</h4>
+
+                            </div> `;
+                        }    
+
+                    }
+
+                }
         })
     </script>
 
