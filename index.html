@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .weather-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h3, h4 {
+            color: #555;
+            margin: 10px 0;
+        }
+
+        h3 {
+            font-size: 24px;
+        }
+
+        h4 {
+            font-size: 18px;
+        }
+
+        /* Add your own styles for different weather conditions */
+        .weather-icon {
+            max-width: 100px;
+            margin: 10px auto;
+        }
+
+        .sunny {
+            color: #ffdb58; /* Yellow */
+        }
+
+        .cloudy {
+            color: #87ceeb; /* Light Sky Blue */
+        }
+
+        .rainy {
+            color: #4682b4; /* Steel Blue */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-container">
+
+        <h2 id="location"></h2>
+        <h3 id="temp"></h3>
+        <h3 id="weather"></h3>
+        <p id="desc"></p>
+        <h4 id="humidity"></h4>
+        
+    </div>
+
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const apiKey = '1b2359d25ca0f7433288f00b97d8317f';
+            
+            // const apiKey = '1b2359d25ca0f7433288f00b97d8317f';
+            const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=6.035179723595554&lon=80.21715362192663&appid=${apiKey}`;
+            const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=6.035179723595554&lon=80.21715362192663&appid=${apiKey}`;
+
+                //6.035179723595554, 80.21715362192663
+                
+                var http = new XMLHttpRequest();  // create instance using XMLHttpRequst class
+                var httpForcast = new XMLHttpRequest();  // create instance using XMLHttpRequst class
+            
+
+
+                http.open('GET', weatherApiUrl);
+                http.send();
+                
+                httpForcast.open('GET', forecastApiUrl);
+                httpForcast.send();
+                
+
+                http.onreadystatechange = ()=>{
+
+              if (http.readyState == 4 && http.status == 200){
+                var data = JSON.parse(http.response)
+                //  console.log(data);
+                // console.log(data.main.temp);
+                
+                var city  = data.name;
+                var weather = data.weather[0].main;
+                var description = data.weather[0].description;
+                
+                var { temp , humidity} = data.main;
+                var tempCel  = (Number(temp) - 273.15).toFixed(2) + ' °C'; 
+                var humPrecent  = humidity + '%';   
+              }
+
+              document.getElementById('location').innerHTML= city;
+              document.getElementById('temp').innerHTML = tempCel;
+              document.getElementById('humidity').innerHTML = humPrecent;
+              document.getElementById('weather').innerHTML = weather;
+              document.getElementById('desc').innerHTML = description;
+             }
+
+             if (httpForcast.readyState == 4 && httpForcast.status == 200){
+                var data = JSON.parse(http.response)
+                 console.log(data);
+             }
+
+
+        })
+    </script>
+
+</body>
+</html>
